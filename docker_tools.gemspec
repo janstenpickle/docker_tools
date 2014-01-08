@@ -6,10 +6,10 @@ require 'docker_tools/version'
 Gem::Specification.new do |spec|
   spec.name          = "docker_tools"
   spec.version       = DockerTools::VERSION
-  spec.authors       = ["TODO: Write your name"]
-  spec.email         = ["TODO: Write your email address"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.authors       = ["Chris Jansen"]
+  spec.email         = ["noone@nowhere.com"]
+  spec.description   = %q{Wrapper around ruby docker API to help with builds and stuff}
+  spec.summary       = %q{See desc}
   spec.homepage      = ""
   spec.license       = "MIT"
 
