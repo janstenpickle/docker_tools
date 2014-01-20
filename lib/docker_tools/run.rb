@@ -15,7 +15,7 @@ module DockerTools
 
     private
     def create_container
-      create_args = { 'Image' => "#{@registry}/#{@name}:#{@tag}", 'Tty' => true }
+      create_args = { 'Image' => "#{@registry}/#{@name}:#{@tag}", 'Tty' => false }
       create_args['Cmd'] = @command.strip.split(/\s+/) unless @command.nil?
       create_args['Volumes'] = volumes_create if @volumes.kind_of?(Array) and @volumes.size > 0
       container = Docker::Container.create(create_args)

@@ -6,13 +6,13 @@ module DockerTools
   class Image
     attr_accessor :image
 
-    def initialize(name, registry, tag, dockerfile=nil)
+    def initialize(name, registry, tag, dockerfile=nil, lookup=true)
       @name = name
       @registry = registry
       @tag = tag
       @full_name = "#{registry}/#{name}:#{tag}"
       @dockerfile = dockerfile
-      @image = lookup_image
+      @image = lookup_image if lookup
     end
 
     def pull
