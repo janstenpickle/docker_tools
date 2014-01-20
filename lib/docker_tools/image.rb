@@ -4,7 +4,7 @@ require "docker_tools"
 
 module DockerTools
   class Image
-    attr_accessor :image
+    attr_accessor :name, :registry, :tag, :dockerfile, :full_name, :image
 
     def initialize(name, registry, tag, dockerfile=nil, lookup=true)
       @name = name
