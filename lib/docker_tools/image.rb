@@ -4,14 +4,15 @@ require "docker_tools"
 
 module DockerTools
   class Image
-    attr_accessor :name, :registry, :tag, :dockerfile, :full_name, :image
+    attr_accessor :name, :registry, :tag, :dir, :full_name, :image
 
-    def initialize(name, registry, tag, dockerfile=nil, lookup=true)
+    def initialize(name, registry, tag, dir=nil, lookup=true)
       @name = name
       @registry = registry
       @tag = tag
       @full_name = "#{registry}/#{name}:#{tag}"
-      @dockerfile = dockerfile
+      @dir = dir
+      @dockerfile = "#{dir}/Dockerfile.template" unless dir.nil?
       @image = lookup_image if lookup
     end
 
@@ -25,7 +26,13 @@ module DockerTools
       when 'image'
         dependency_tag = dependency['tag']
         dependency_tag = DockerTools::Dependency.new(dependency['repository'], dependency['registry'], dependency['tag'], fallback_tag).run unless no_pull
-        @image = Docker::Image.build(dockerfile(@name, registry, dependency_tag, template_vars))
+
+        dockerfile_path = "#{@dir}/DockerFile"
+        dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
+        File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
+        @image = Docker::Image.build_from_dir(@dir)
+        File.delete(dockerfile_path)
+
       when 'debootstrap'
         debootstrap = DockerTools::Debootstrap.new(@name, distro)
         debootstrap.run
