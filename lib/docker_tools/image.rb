@@ -27,10 +27,11 @@ module DockerTools
         dependency_tag = dependency['tag']
         dependency_tag = DockerTools::Dependency.new(dependency['repository'], dependency['registry'], dependency['tag'], fallback_tag).run unless no_pull
 
-        dockerfile_path = "#{@dir}/DockerFile"
+        dockerfile_path = "#{@dir}/Dockerfile"
         dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
         File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
         @image = Docker::Image.build_from_dir(@dir)
+        File.delete(dockerfile_path)
       when 'debootstrap'
         debootstrap = DockerTools::Debootstrap.new(@name, distro)
         debootstrap.run
