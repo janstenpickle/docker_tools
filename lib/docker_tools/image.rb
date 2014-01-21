@@ -6,6 +6,7 @@ module DockerTools
   class Image
     attr_accessor :name, :registry, :tag, :dir, :full_name, :image
 
+
     def initialize(name, registry, tag, dir=nil, lookup=true)
       @name = name
       @registry = registry
@@ -14,6 +15,8 @@ module DockerTools
       @dir = dir
       @dockerfile = "#{dir}/Dockerfile.template" unless dir.nil?
       @image = lookup_image if lookup
+      # Set the read timeout for the connection
+      Excon.defaults[:read_timeout] = DockerTools.image_timeout
     end
 
     def pull
@@ -30,7 +33,7 @@ module DockerTools
         dockerfile_path = "#{@dir}/Dockerfile"
         dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
         File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
-        @image = Docker::Image.build_from_dir(@dir)
+        @image = Docker::Image.build_from_dir(@dir) { | chunk | puts chunk }
         File.delete(dockerfile_path)
       when 'debootstrap'
         debootstrap = DockerTools::Debootstrap.new(@name, distro)
