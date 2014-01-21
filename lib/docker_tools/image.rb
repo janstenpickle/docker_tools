@@ -31,8 +31,6 @@ module DockerTools
         dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
         File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
         @image = Docker::Image.build_from_dir(@dir)
-        File.delete(dockerfile_path)
-
       when 'debootstrap'
         debootstrap = DockerTools::Debootstrap.new(@name, distro)
         debootstrap.run
