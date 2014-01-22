@@ -22,11 +22,12 @@ module DockerTools
     end
 
     def pull
+      puts "Pulling image #{@image_name}"
       Docker::Image.create('fromImage' => @image_name, 'tag' => @tag)
       @image = lookup_image
     end
 
-    def build(registry: @registry, tag: @tag, method: 'image', distro: 'precise', fallback_tag: DockerTools.dependency_fallback_tag, no_pull: false, template_vars: {})
+    def build(registry: @registry, tag: @tag, method: 'image', distro: 'precise', fallback_tag: DockerTools.dependency_fallback_tag, no_pull: DockerTools.no_pull, template_vars: {})
       case method
       when 'image'
         dependency_tag = dependency['tag']
