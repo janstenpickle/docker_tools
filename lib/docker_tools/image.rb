@@ -12,6 +12,8 @@ module DockerTools
       @registry = registry
       @tag = tag
       @full_name = "#{registry}/#{name}:#{tag}"
+      @image_name = "#{registry}/#{name}" unless registry.nil?
+      @image_name = name if registry.nil?
       @dir = dir
       @dockerfile = "#{dir}/Dockerfile.template" unless dir.nil?
       @image = lookup_image if lookup
@@ -20,7 +22,7 @@ module DockerTools
     end
 
     def pull
-      Docker::Image.create('fromImage' => "#{@registry}/#{@name}", 'tag' => @tag)
+      Docker::Image.create('fromImage' => @image_name, 'tag' => @tag)
       @image = lookup_image
     end
 
@@ -55,13 +57,22 @@ module DockerTools
         return nil
       else
         template = dockerfile
+        dependency = {}
         if template =~ /(FROM|from)\s+(\S+)\/(\S+):(\S+)/
-          dependency = {}
           dependency['registry'] = $2
           dependency['repository'] = $3
           dependency['tag'] = $4
           return dependency
+        elsif template =~ /(FROM|from)\s+(\S+):(\S+)/
+          dependency['registry'] = nil
+          dependency['repository'] = $2
+          dependency['tag'] = $3
+        elsif template =~ /(FROM|from)\s+(\S+)$/
+          dependency['registry'] = nil
+          dependency['repository'] = $2
+          dependency['tag'] = nil
         end
+        dependency
       end
     end
 
@@ -82,11 +93,11 @@ module DockerTools
     def lookup_image
       images = Docker::Image.all
       images.each do | image |
-        if image.info['Repository'] == "#{@registry}/#{@name}" and image.info['Tag'] == @tag
+        if image.info['Repository'] == @image_name and image.info['Tag'] == @tag
           return image
         end
       end
-      return nil
+      nil
     end
   end
 end
