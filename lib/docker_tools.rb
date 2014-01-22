@@ -26,7 +26,7 @@ module DockerTools
   end
 
   def no_pull
-    @no_pull ||= evn_no_pull || default_no_pull
+    @no_pull ||= env_no_pull || default_no_pull
   end
 
   def no_pull=(new_no_pull)
