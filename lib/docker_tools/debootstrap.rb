@@ -10,7 +10,7 @@ module DockerTools
     end
 
     def run
-      output = `debootstrap #{@distro} #{@tmpdir}/#{@name}`
+      output = `debootstrap --download-only #{@distro} #{@tmpdir}/#{@name}`
       unless $?.to_i == 0
         puts output
         throw "Could not run debootstrap"
