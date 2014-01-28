@@ -27,7 +27,7 @@ module DockerTools
       @image = lookup_image
     end
 
-    def build(registry: @registry, tag: @tag, method: 'image', distro: 'precise', fallback_tag: DockerTools.dependency_fallback_tag, no_pull: DockerTools.no_pull, template_vars: {})
+    def build(registry: @registry, tag: @tag, method: 'image', distro: 'precise', fallback_tag: DockerTools.dependency_fallback_tag, no_pull: DockerTools.no_pull, template_vars: {}, rm: false)
       case method
       when 'image'
         dependency_tag = dependency['tag']
@@ -36,7 +36,7 @@ module DockerTools
         dockerfile_path = "#{@dir}/Dockerfile"
         dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
         File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
-        @image = Docker::Image.build_from_dir(@dir) { | chunk | puts chunk }
+        @image = Docker::Image.build_from_dir(@dir, { 'rm' => rm }) { | chunk | puts chunk }
         File.delete(dockerfile_path)
       when 'debootstrap'
         debootstrap = DockerTools::Debootstrap.new(@name, distro)
