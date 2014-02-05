@@ -47,7 +47,7 @@ module DockerTools
         raise "Invalid value for method: #{method}"
       end
       @image.tag('repo' => "#{@registry}/#{@name}", 'tag' => @tag, 'force' => true)
-      @image = lookup_image
+      @image
     end
 
     def tag (new_tag)
