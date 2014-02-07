@@ -11,7 +11,8 @@ module DockerTools
       @name = name
       @registry = registry
       @tag = tag
-      @full_name = "#{registry}/#{name}:#{tag}"
+      @full_name = "#{registry}/#{name}:#{tag}" unless registry.nil?
+      @full_name = "#{name}:#{tag}" if registry.nil?
       @image_name = "#{registry}/#{name}" unless registry.nil?
       @image_name = name if registry.nil?
       @dir = dir
@@ -36,7 +37,17 @@ module DockerTools
         dockerfile_path = "#{@dir}/Dockerfile"
         dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
         File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
-        @image = Docker::Image.build_from_dir(@dir, { 'rm' => rm, 'nocache' => no_cache }) { | chunk | puts chunk }
+        @image = Docker::Image.build_from_dir(@dir, { 'rm' => rm, 'nocache' => no_cache }) do | chunk | 
+          if chunk.kind_of?(Hash)
+            if chunk.has_key?('error')
+              puts chunk['error']
+              raise chunk['error']
+            end
+            puts chunk['stream'] if chunk.has_key?('stream')
+          else
+            puts chunk
+          end
+        end
         File.delete(dockerfile_path)
       when 'debootstrap'
         debootstrap = DockerTools::Debootstrap.new(@name, distro)
@@ -95,7 +106,7 @@ module DockerTools
     def lookup_image
       images = Docker::Image.all
       images.each do | image |
-        if image.info['Repository'] == @image_name and image.info['Tag'] == @tag
+        if image.info['RepoTags'].include?(@full_name)
           return image
         end
       end
