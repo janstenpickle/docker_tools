@@ -22,4 +22,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rake"
   spec.add_dependency "docker-api"
   spec.add_dependency "erubis"
+  spec.add_dependency "json"
 end

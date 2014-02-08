@@ -1,4 +1,5 @@
 require "docker"
+require "json"
 require "erubis"
 require "docker_tools"
 
@@ -38,6 +39,7 @@ module DockerTools
         dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
         File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
         @image = Docker::Image.build_from_dir(@dir, { 'rm' => rm, 'nocache' => no_cache }) do | chunk | 
+          chunk = JSON.parse(chunk)
           if chunk.kind_of?(Hash)
             if chunk.has_key?('error')
               puts chunk['error']
