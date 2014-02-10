@@ -39,15 +39,16 @@ module DockerTools
         dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
         File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
         @image = Docker::Image.build_from_dir(@dir, { 'rm' => rm, 'nocache' => no_cache }) do | chunk | 
-          chunk = JSON.parse(chunk)
-          if chunk.kind_of?(Hash)
-            if chunk.has_key?('error')
-              puts chunk['error']
-              raise chunk['error']
+          Docker::Util.parse_output(chunk) do | output |
+            if output.kind_of?(Hash)
+              if output.has_key?('error')
+                puts output['error']
+                raise output['error']
+              end
+              puts output['stream'] if output.has_key?('stream')
+            else
+              puts output
             end
-            puts chunk['stream'] if chunk.has_key?('stream')
-          else
-            puts chunk
           end
         end
         File.delete(dockerfile_path)
