@@ -10,8 +10,8 @@ module DockerTools
       @tag = tag
       @command = command
       @volumes = volumes
-      @image = "#{@registry}/#{@name}:#{@tag}" if image = nil?
-      @image = image unless image = nil?
+      @image = "#{@registry}/#{@name}:#{@tag}" if image.nil?
+      @image = image unless image.nil?
       @container = create_container(@image, @command, @volumes)
     end
 

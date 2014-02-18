@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["noone@nowhere.com"]
   spec.description   = %q{Wrapper around ruby docker API to help with builds and stuff}
   spec.summary       = %q{See desc}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/janstenpickle/docker_tools"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
