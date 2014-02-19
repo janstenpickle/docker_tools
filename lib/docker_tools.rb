@@ -3,6 +3,7 @@ require "docker_tools/image"
 require "docker_tools/run"
 require "docker_tools/debootstrap"
 require "docker_tools/dependency"
+require "docker_tools/util"
 require "docker"
 
 module DockerTools

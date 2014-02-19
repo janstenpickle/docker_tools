@@ -39,7 +39,7 @@ module DockerTools
         dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
         File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
         @image = Docker::Image.build_from_dir(@dir, { 'rm' => rm, 'nocache' => no_cache }) do | chunk | 
-          Docker::Util.parse_output(chunk) do | output |
+          DockerTools::Util.parse_output(chunk) do | output |
             if output.kind_of?(Hash)
               if output.has_key?('error')
                 puts output['error']
