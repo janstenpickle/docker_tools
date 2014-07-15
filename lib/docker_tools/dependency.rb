@@ -15,8 +15,9 @@ module DockerTools
     def run
       tag = @tag
       image = DockerTools::Image.new(@name, @registry, @tag)
-      image.pull
-      if image.image.nil?
+      begin
+        image.pull
+      rescue
         puts "Falling back to image #{@registry}/#{@name}:#{@fallback_tag}"
         image = DockerTools::Image.new(@name, @registry, @fallback_tag)
         image.pull
