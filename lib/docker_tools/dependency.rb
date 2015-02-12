@@ -4,6 +4,8 @@ require "docker_tools/image"
 
 
 module DockerTools
+  attr_accessor :name
+
   class Dependency
     def initialize(name, registry, tag, fallback_tag)
       @name = name
