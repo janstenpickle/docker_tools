@@ -19,6 +19,7 @@ module DockerTools
       image = DockerTools::Image.new(@name, @registry, @tag)
       begin
         image.pull
+        throw "Cannot find image" if image.image.nil?
       rescue
         puts "Falling back to image #{@registry}/#{@name}:#{@fallback_tag}"
         image = DockerTools::Image.new(@name, @registry, @fallback_tag)
