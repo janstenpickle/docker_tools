@@ -7,9 +7,6 @@ require "docker_tools/util"
 require "docker"
 
 module DockerTools
-  #Default the docker url to docker http service
-  Docker.url = 'http://localhost:4243'
-
   def default_dependency_fallback_tag
     'latest'
   end
