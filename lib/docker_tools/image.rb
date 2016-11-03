@@ -38,7 +38,7 @@ module DockerTools
         dockerfile_path = "#{@dir}/Dockerfile"
         dockerfile_contents = dockerfile(@name, registry, dependency_tag, template_vars)
         File.open(dockerfile_path, 'w') { | file | file.write(dockerfile_contents) }
-        @image = Docker::Image.build_from_dir(@dir, { 'rm' => rm, 'nocache' => no_cache }) do | chunk | 
+        @image = Docker::Image.build_from_dir(@dir, { 'rm' => rm, 'nocache' => no_cache }) do | chunk |
           DockerTools::Util.parse_output(chunk) do | output |
             if output.kind_of?(Hash)
               if output.has_key?('error')
@@ -109,7 +109,7 @@ module DockerTools
     def lookup_image
       images = Docker::Image.all
       images.each do | image |
-        if image.info['RepoTags'].include?(@full_name)
+        if (image.info['RepoTags'] || []).include?(@full_name)
           return image
         end
       end
