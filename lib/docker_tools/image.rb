@@ -26,7 +26,9 @@ module DockerTools
     def pull
       puts "Pulling image #{@image_name}"
       Docker::Image.create('fromImage' => @image_name, 'tag' => @tag)
-      @image = lookup_image
+      @image = lookup_image.tap do |image|
+        raise "Failed to pull image '#{image_name}' with tag '#{@tag}'." if image.nil?
+      end
     end
 
     def build(registry: @registry, tag: @tag, method: 'image', distro: 'precise', fallback_tag: DockerTools.dependency_fallback_tag, no_pull: DockerTools.no_pull, template_vars: {}, rm: false, no_cache: false)
